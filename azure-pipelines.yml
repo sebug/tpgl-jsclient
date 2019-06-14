@@ -17,3 +17,5 @@ steps:
   inputs:
     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/dist'
 
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Build Artifact: drop'

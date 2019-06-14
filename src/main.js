@@ -46,13 +46,17 @@ function wrapRetry(numberOfTries, callback) {
     };
 }
 
+function firstPolicy(callback) {
+    return wrapRetry(3, wrapTimeout(shortTimeout, callback));
+}
+
 function getStops() {
     return fetch('https://tpgl-proxy.azurewebsites.net/api/GetStops?key=' + key, {
 	mode: 'cors'
     }).then(response => response.json());
 }
 
-wrapRetry(3, wrapTimeout(shortTimeout, getStops))().then(stopResult => {
+firstPolicy(getStops)().then(stopResult => {
     const stops = stopResult.stops;
     const stopNames = stops.map(s => s.stopName);
     const stopElements = stopNames.map(s => '<option value="' + s + '"></option>');

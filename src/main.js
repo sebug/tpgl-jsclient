@@ -1,1 +1,7 @@
-console.log('Ohai Azure app services');
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').then(function (reg) {
+	console.log('Registration succeeded, scope is ' + reg.scope);
+    }).catch(function (error) {
+	console.log('Registration failed with ' + error);
+    });
+}

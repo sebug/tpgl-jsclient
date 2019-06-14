@@ -5,26 +5,28 @@ const shortTimeout = 2 * 1000;
 
 // calls a promise callback with a timeout mechanism
 // inspired by https://davidwalsh.name/fetch-timeout
-function timeout(milliseconds,callback) {
-    let didTimeOut = false;
-    return new Promise((resolve, reject) => {
-	const to = setTimeout(function() {
-            didTimeOut = true;
-            reject(new Error('Request timed out'));
-	}, milliseconds);
+function wrapTimeout(milliseconds,callback) {
+    return () => {
+	let didTimeOut = false;
+	return new Promise((resolve, reject) => {
+	    const to = setTimeout(function() {
+		didTimeOut = true;
+		reject(new Error('Request timed out'));
+	    }, milliseconds);
 
-	callback().then(response => {
-	    clearTimeout(to);
-	    if (!didTimeOut) {
-		resolve(response);
-	    }
-	}).catch(err => {
-	    if (didTimeOut) {
-		return;
-	    }
-	    reject(err);
+	    callback().then(response => {
+		clearTimeout(to);
+		if (!didTimeOut) {
+		    resolve(response);
+		}
+	    }).catch(err => {
+		if (didTimeOut) {
+		    return;
+		}
+		reject(err);
+	    });
 	});
-    });
+    };
 }
 
 function getStops() {
@@ -33,7 +35,7 @@ function getStops() {
     }).then(response => response.json());
 }
 
-timeout(shortTimeout, getStops).then(stopResult => {
+wrapTimeout(shortTimeout, getStops)().then(stopResult => {
     const stops = stopResult.stops;
     const stopNames = stops.map(s => s.stopName);
     const stopElements = stopNames.map(s => '<option value="' + s + '"></option>');

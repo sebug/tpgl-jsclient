@@ -7,21 +7,23 @@ const shortTimeout = 2 * 1000;
 // inspired by https://davidwalsh.name/fetch-timeout
 function timeout(milliseconds,callback) {
     let didTimeOut = false;
-    const to = setTimeout(function() {
-        didTimeOut = true;
-        reject(new Error('Request timed out'));
-    }, milliseconds);
+    return new Promise((resolve, reject) => {
+	const to = setTimeout(function() {
+            didTimeOut = true;
+            reject(new Error('Request timed out'));
+	}, milliseconds);
 
-    callback().then(response => {
-	clearTimeout(to);
-	if (!didTimeOut) {
-	    resolve(response);
-	}
-    }).catch(err => {
-	if (didTimeOut) {
-	    return;
-	}
-	reject(err);
+	callback().then(response => {
+	    clearTimeout(to);
+	    if (!didTimeOut) {
+		resolve(response);
+	    }
+	}).catch(err => {
+	    if (didTimeOut) {
+		return;
+	    }
+	    reject(err);
+	});
     });
 }
 

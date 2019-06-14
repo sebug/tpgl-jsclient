@@ -13,6 +13,7 @@ steps:
 - script: ./build.sh
   displayName: 'Build Shell Script'
 
-- task: PublishBuildArtifacts@1
+- task: ArchiveFiles@2
   inputs:
-    PathtoPublish: '$(System.DefaultWorkingDirectory)/dist'
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/dist'
+

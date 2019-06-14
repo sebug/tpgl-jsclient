@@ -7,8 +7,13 @@ function getStops() {
     }).then(response => response.json());
 }
 
-getStops().then(stops => {
-    console.log(stops);
+getStops().then(stopResult => {
+    const stops = stopResult.stops;
+    const stopNames = stops.map(s => s.stopName);
+    const stopElements = stopNames.map(s => '<option value="' + s + '"></option>');
+    const stopInnerHtml = stopElements.join(' ');
+    const stopDatalist = document.querySelector('#stops');
+    stopDataList.innerHTML = stopInnerHtml;
 });
 
 if ('serviceWorker' in navigator) {

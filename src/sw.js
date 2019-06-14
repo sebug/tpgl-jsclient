@@ -7,3 +7,7 @@ self.addEventListener('install', function (event) {
 	    ]);
 	}));
 });
+
+// TODO: Actually serve from cache. But for this, we want it to be a
+// bit more stable
+

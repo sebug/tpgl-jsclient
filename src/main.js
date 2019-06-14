@@ -12,7 +12,7 @@ getStops().then(stopResult => {
     const stopNames = stops.map(s => s.stopName);
     const stopElements = stopNames.map(s => '<option value="' + s + '"></option>');
     const stopInnerHtml = stopElements.join(' ');
-    const stopDatalist = document.querySelector('#stops');
+    const stopDataList = document.querySelector('#stops');
     stopDataList.innerHTML = stopInnerHtml;
 });
 

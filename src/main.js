@@ -32,6 +32,7 @@ function wrapTimeout(milliseconds,callback) {
 // Wraps a callback in a retry loop
 function wrapRetry(numberOfTries, callback) {
     function doTry(triesLeft) {
+	console.log('trying...');
 	if (triesLeft <= 1) {
 	    return callback();
 	}
@@ -40,7 +41,9 @@ function wrapRetry(numberOfTries, callback) {
 	    return doTry(triesLeft - 1);
 	});
     }
-    return () => doTry(numberOfTries);
+    return () => {
+	return doTry(numberOfTries);
+    };
 }
 
 function getStops() {

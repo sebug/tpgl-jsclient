@@ -29,13 +29,27 @@ function wrapTimeout(milliseconds,callback) {
     };
 }
 
+// Wraps a callback in a retry loop
+function wrapRetry(numberOfTries, callback) {
+    function doTry(triesLeft) {
+	if (triesLeft <= 1) {
+	    return callback();
+	}
+	return callback().catch(err => {
+	    console.log('failed, trying again');
+	    return doTry(triesLeft - 1);
+	});
+    }
+    return () => doTry(numberOfTries);
+}
+
 function getStops() {
     return fetch('https://tpgl-proxy.azurewebsites.net/api/GetStops?key=' + key, {
 	mode: 'cors'
     }).then(response => response.json());
 }
 
-wrapTimeout(shortTimeout, getStops)().then(stopResult => {
+wrapRetry(3, wrapTimeout(shortTimeout, getStops))().then(stopResult => {
     const stops = stopResult.stops;
     const stopNames = stops.map(s => s.stopName);
     const stopElements = stopNames.map(s => '<option value="' + s + '"></option>');
